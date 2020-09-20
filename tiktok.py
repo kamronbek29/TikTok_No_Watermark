@@ -27,16 +27,6 @@ async def get_video_water_url(video_url):
             return video_water_url, referer, video_id
 
 
-async def remove_watermark(file_directory):
-    new_file_directory = file_directory.replace('_water', '')
-    command = ['ffmpeg', '-i', file_directory, '-filter:v', 'crop=in_w:in_h-185', '-c:a', 'copy', new_file_directory]
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    process.communicate()
-    os.remove(file_directory)
-
-    return new_file_directory
-
-
 async def download_video(video_url, referer, video_id):
     file_directory = 'videos/{}_water.mp4'.format(video_id)
     TIKTOK_HEADERS['referer'] = referer
@@ -51,6 +41,16 @@ async def download_video(video_url, referer, video_id):
                 file_stream.write(video_url_content)
 
             return file_directory
+        
+
+async def remove_watermark(file_directory):
+    new_file_directory = file_directory.replace('_water', '')
+    command = ['ffmpeg', '-i', file_directory, '-filter:v', 'crop=in_w:in_h-185', '-c:a', 'copy', new_file_directory]
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process.communicate()
+    os.remove(file_directory)
+
+    return new_file_directory
 
 
 async def main():
